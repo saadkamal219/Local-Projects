@@ -1,0 +1,6 @@
+MAT 121 	  Mathematics - II: Linear Algebra & Coordinate Geometry----3.
+CSE 122 	  Programming and Problem Solving---------------------------3.	
+CSE 123 	  Problem Solving Lab---------------------------------------1.
+PHY 123         Physics - II: Electricity: Magnetism and Modern Physics---3.
+PHY 124 	  Physics - II Lab------------------------------------------1.
+ENG 123 	  Writing and Comprehension---------------------------------1.
