@@ -1,16 +1,73 @@
 import csv
 import pandas as pd
+import os
+import sys
+import warnings
+from playsound import playsound as play
 
 print("\n\t|----------------------------------|")
 print("\t|--|   Digital Voting Machine   |--|")
 print("\t|__________________________________|\n")
 
-fields_of_voter_registration = ['Name', 'NID', 'Sex', 'Date of Birth', 'Father name', 'Mother name', 'Password']
-file_of_voter_registration = '/home/saad/Desktop/Digital_Voting _Machine/Voter_Information.csv'
-file_of_candidate_registration = '/home/saad/Desktop/Digital_Voting _Machine/Candidate_Information.csv'
+fields_of_voter_registration = ['Name', 'NID', 'Sex', 'Date_of_Birth', 'Father_name', 'Mother_name', 'Password']
+file_of_voter_registration = '/home/saad/Desktop/Digital_Voting_Machine/Voter_Information.csv'
+file_of_candidate_registration = '/home/saad/Desktop/Digital_Voting_Machine/Candidate_Information.csv'
 list_of_voter_registration = list()
+list_of_candidate_registration = list()
 dataframe_voter = pd.read_csv(file_of_voter_registration)
-dataframe_candidate = pd.read_csv(file_of_candidate_registration)
+# dataframe_candidate = pd.read_csv('/home/saad/Desktop/Digital_Voting _Machine/Candidate_Information.csv')
+dataframe_candidate = pd.read_csv('/home/saad/Desktop/Digital_Voting_Machine/Candidate_Information.csv')
+system_location = '/home/saad/Desktop/Digital_Voting_Machine/Digital_Voting_Machine.py'
+reset_command = 'python3 system_location'
+candidate_registration_completion = '/home/saad/Desktop/Digital_Voting_Machine/Candidate_registration_completion.mp3'
+
+def candidate_registration():
+
+    print("\n\t|----------------------------------------------------|")
+    print("\t|--|   Welcome to Candidate Registration Portal   |--|")
+    print("\t|____________________________________________________|\n")
+
+    candidate_name = input("\tEnter your name: ")
+    candidate_nid = int(input("\tEnter your NID number: "))
+    candidate_symbol = input("\tEnter your symbol: ")
+    candidate_party = input("\tEnter candidate's party name: ")
+    candidate_position = input("\tEnter your position: ")
+    candidate_region = input("\tEnter your region: ")
+
+    candidate_record = [candidate_name, candidate_nid, candidate_symbol, candidate_party, candidate_position, candidate_region]
+
+    list_of_candidate_registration.append(candidate_record)
+
+    choice5 = input("\tYour records has been recorded. Do you want to finish the process? [y/n]: ")
+
+    try:
+
+        if choice5 == 'y':
+
+            with open('/home/saad/Desktop/Digital_Voting_Machine/Candidate_Information.csv', 'a') as candidate_csv_file:
+
+                csvWriter2 = csv.writer(candidate_csv_file)
+                    # csvWriter.writerow(fields_of_voter_registration)
+                csvWriter2.writerows(list_of_candidate_registration)
+                    
+                # df2 = pd.read_csv(list_of_candidate_registration)
+                # check2 = df2.empty
+
+                # if check2 == False:
+                print("\nSuccessfully updated information. Now you are a nominating candidate for the voting system.\nWait for the admin for confirmation\nAll of this are managed by the admin and admin has the right not to select you as candidate or remove you from the voting system.\n")
+                play(candidate_registration_completion)
+                main_menu()
+
+            # else:
+                # print("\tError while transferring data. Please try again\n")
+                # candidate_registration()
+
+    except:
+        print("\tError while recording data. Please try again.\n")
+        candidate_registration()
+
+    finally:
+        main_menu()
 
 def database_handling():
 
@@ -48,18 +105,30 @@ def database_handling():
 
 def developer_choice():
 
-    print("Welcome Administrator. Please choose your action.\n")
-    print("\t1. View Voter List")
-    print("\t2. View Candidate List")
-    print("\t3. Delete from Voter List")
-    print("\t4. Delete from Candidate List")
-    print("\t5. Handel Database")
-    print("\t5. Exit Developer mode")
+    print("Welcome Administrator.For better performance, please restart the program once.")
+    onOff = input("Restart the program [yes|no]: ")
+
+    if onOff == 'yes':
+        try:
+            exit(1)
+            warnings.filterwarnings('ignore')
+        except SystemExit as e:
+            print("System exited with code ", e, ". Please restart")
+            warnings.filterwarnings('ignore')
+    elif onOff == 'no':
+        print("\n\tPlease choose your action.\n")
+        print("\t1. View Voter List")
+        print("\t2. View Candidate List")
+        print("\t3. Delete from Voter List")
+        print("\t4. Delete from Candidate List")
+        print("\t5. Handel Database")
+        print("\t6. Exit Developer mode")
 
     choice3 = int(input("\t>_ "))
 
     if choice3 == 1:
         print(dataframe_voter)
+        # os.system('cat /home/saad/Desktop/Digital_Voting_Machine/Voter_Information.csv')
         print()
         developer_choice()
     elif choice3 == 2:
@@ -139,14 +208,17 @@ def registration_panel():
                 if check == False:
 
                     print("\n\tInformation successfully recorded\n")
+                    os.system('python3 /home/saad/Desktop/Digital_Voting_Machine/Digital_Voting_Machine.py')
 
                 else:
 
                     print("\n\tError recording information\n")
+                    registration_panel()
 
     except:
 
         print("\tError transferring information.")
+        registration_panel()
 
     finally:
 
@@ -158,7 +230,7 @@ def main_menu():
         print("\t1. Voter Registration")
         print("\t2. Candidate Registration")
         print("\t3. Enter Developer mode")
-        print("\t4. Return to main menu")
+        print("\t4. Exit main menu")
 
         choice1 = int(input("\t>_ "))
 
@@ -167,7 +239,10 @@ def main_menu():
             registration_panel()
 
         elif choice1 == 2:
-            print("Welcome to candidate registration")
+            
+            candidate_registration()
+            # exit(1)
+
         elif choice1 == 3:
 
             developer_mode()

@@ -1,5 +1,6 @@
-Name,NID,Sex,Date of Birth,Father name,Mother name,Password
+Name,NID,Sex,Date_of_Birth,Father_name,Mother_name,Password
 Saad Kamal,2121514729,Male,27/8/2002,Gulam Kabir Kamal,Afroja Akter ,456456
 Noshin Nawar,1234567891,Female,9/6/2001,AKM Fazlul Faque,Umme Salma,456789
 Sadekul Hasan Sakib,2121514732,Male,12/12/2002,Abbdus Sattar,Umme Salma,123123
-Atikur Rahman Atik,2121514700,Male,15/11/2002,,,789789
+Kamal Saad,7894563215,Male,27/08/2002,Gulam Kabir,Afroza Akter,789789
+Sakib Dewan,7894561232,Male,17/8/2000,Sattar,Salma,258258
