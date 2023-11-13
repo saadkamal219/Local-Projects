@@ -19,7 +19,8 @@ vote_menu() {
     echo -e "|--|   Welcome to Voter Menu   |--|"
     echo -e "|_________________________________|\n"
 
-    read -p "Enter your NID number: " voter_NID
+    echo -e "Enter your NID number: " 
+    read -p ">_ " voter_NID
 
     column_to_search=2
 
@@ -27,105 +28,29 @@ vote_menu() {
 
     if [ $? -eq 0 ];
     then
+        
+        echo -e "\nEnter your region. Choose from bellow: "
 
-        # selected_row=()
+        selected_field=6
 
-        # selected_row=$(grep "$voter_NID" "$file_of_voter_registration")
+        awk -F',' '{if (!seen[$'$selected_field']++) print $'$selected_field'}' $file_of_candidate_registration
 
-        # IFS="," read -ra row_elements <<< "$selected_row"
-        # for element in "${row_elements[@]}"; do
-        #     selected_rows+=("\"$element\"")
-        # done
+        #cut -d',' -f$selected_field data.csv | sort | uniq
 
-        # echo "Selected row elements:"
-        # # Print the selected row elements
-        # for element in "${selected_rows[@]}"; do
-        #     echo "$element"
-        # done
+        echo 
 
-        # for field in "${selected_row[@]}"; do
-        #     echo "$field"
-        # done
+        read -p ">_ " voter_region
 
-        # Prompt the user for the second value to search for
-        # read -p  "Enter your password: " voter_password
+        echo -e "\nEnter the candidate position where you want to submit your vote: "
+        read -p ">_ " voter_position
 
-        # status=false
+        echo -e "\n|-----|Search Results for $voter_position at $voter_region|-----|\n"
 
-        # for i in "${selected_row[@]}"; 
-        # do
-        #     if [[ "$i" == "$voter_password" ]]; then
-        #         status=true
-        #         break  # Exit the loop once the target value is found
-        #     fi
-        # done
+        awk -F',' -v Region="$voter_region" -v Position="$voter_position" '$6 == Region && $5 == Position' $file_of_candidate_registration | column -t -s,
 
-        # if $status; 
-        # then
-        #     echo -e "Welcome user" #voting
-        # else
-        #     echo -e "\nIncorrect password. Remember the password and try again.\nRemember that frequently pushing wrong password will suspend the user from voting.\n"
-        # fi
+        echo -e "\nYour vote is precious for the People's Republic of Bangladesh. So, choose your $voter_position wisely..."
 
-        echo -e "\n|------------------------------------|"
-        echo -e "|--|   Welcome to Voting System   |--|"
-        echo -e "|____________________________________|\n"
-
-        read -p "Enter your region: " target_region
-
-        count=0
-
-        while IFS=',' read -r Name NID Symbol Party Position Region Participation; 
-        do
-            if [ "$Region" = "$target_region" ];
-            then
-                echo -e "\nName: $Name"
-                echo -e "NID: $NID"
-                echo -e "Symbol: $Symbol"
-                echo -e "Party: $Party"
-                echo -e "Position Candidate: $Position"
-                echo -e "Participation at: " $Participation
-                # echo -e "Candidate Region: $Region"
-                count=$(($count+1))
-                # echo -e "Password: $password"
-                # break  # Stop searching once the record is found
-            fi
-        done < "$file_of_candidate_registration"
-
-        echo -e "\nTotal $count candidates in $target_region\n"
-
-        read -p "Enter your voting position: " target_position
-
-        while IFS=',' read -r Name NID Symbol Party Position Region Participation; 
-        do
-            if [ "$Region" = "$target_region" ] && [ "$Position" = "$target_position" ];
-            then
-                echo -e "\nName: $Name"
-                echo -e "NID: $NID"
-                echo -e "Symbol: $Symbol"
-                echo -e "Party: $Party"
-                echo -e "Participation at: " $Participation
-                # echo -e "Position Candidate: $Position"
-                # echo -e "Candidate Region: $Region"
-                count2=$(($count2+1))
-                # echo -e "Password: $password"
-                # break  # Stop searching once the record is found
-            fi
-        done < "$file_of_candidate_registration"
-
-        echo -e "\n Total $count2 candidates for $target_position in $target_region"
-
-        echo -e "\nStart voting for $target_position in $target_region? [y/n]: " proceed2
-
-        if [ $proceed2 == "y" ] || [ $proceed2 == 'Y' ]; 
-        then
-
-            echo -e "Preparing the Digital Voting System card....."
-            
-
-        else
-            top_menu
-        fi
+        #voting process
 
     else
 
@@ -223,6 +148,13 @@ developer_mode() {
             sleep 2
 
             #delete voter record
+            current_directory=$(pwd)
+
+            cd $current_directory
+
+            touch temp.csv
+
+            awk -F',' -v value="$voter_nid_card_number" '$2 != value' $file_of_voter_registration > temp.csv && mv temp.csv $file_of_voter_registration
 
             echo -e "Records for $voter_nid_card_number has been deleted. \n\n"
 
@@ -395,7 +327,7 @@ main_menu() {
     if [ $choice1 -eq 1 ]; then voter_registration
     elif [ $choice1 -eq 2 ]; then candidate_registration
     elif [ $choice1 -eq 3 ]; then developer_login
-    elif [ $choice1 -eq 4 ]; 
+    elif [ $choice1 -eq 4 ];
     then 
         echo -e ""
         read -p "Thanks for using this portal. It will be our pleasure if you leave some feedback. Proceed? [y/n]: " proceeding
@@ -421,7 +353,7 @@ main_menu() {
             echo -e "Thanks for using this portal."
             sleep 1
 
-            exit 1
+            top_menu
         
         fi
 
