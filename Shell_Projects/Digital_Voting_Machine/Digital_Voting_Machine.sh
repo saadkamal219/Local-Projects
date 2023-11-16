@@ -12,61 +12,154 @@ garbage_collerctor='/home/saad/Desktop/Digital_Voting_Machine/Garbage.csv'
 system_location='/home/saad/Desktop/Digital_Voting_Machine/Digital_Voting_Machine.py'
 candidate_registration_completion='/home/saad/Desktop/Digital_Voting_Machine/Candidate_registration_completion.mp3'
 feedback_file='/home/saad/Desktop/Digital_Voting_Machine/feedback.txt'
+mayor_vote_record='/home/saad/Desktop/Digital_Voting_Machine/mayor_vote_record.txt'
+comissionar_vote_record='/home/saad/Desktop/Digital_Voting_Machine/comissionar_vote_record.txt'
+mp_vote_record='/home/saad/Desktop/Digital_Voting_Machine/mp_vote_record.txt'
+
+feedback_function() {
+
+    echo -e "\nEnter your feedback here: \n"
+    
+    read feedback
+
+    echo "$feedback" >> "$feedback_file"
+
+    echo -e "recording..."
+    sleep 2
+
+    echo -e "Thnaks for your response. \n"
+
+    sleep 2
+            
+    top_menu
+
+}
 
 vote_menu() {
 
-    echo -e "\n|--------------  -----------------|"
-    echo -e "|--|   Welcome to Voter Menu   |--|"
-    echo -e "|_________________________________|\n"
+    # Get the current timestamp
+    current_date=$(date +%s)
 
-    echo -e "Enter your NID number: " 
-    read -p ">_ " voter_NID
+    # Define start and end dates as timestamps
+    start_date=$(date -d "2023-01-01" +%s)
+    end_date=$(date -d "2023-12-31" +%s)
 
-    column_to_search=2
-
-    first_result=$(awk -F ',' -v first="$voter_NID" '$0 ~ first { found=1; row=$0; exit } END { if (!found) exit 1 }' "$file_of_voter_registration")
-
-    if [ $? -eq 0 ];
+    if [ "$current_date" -ge "$start_date" ] && [ "$current_date" -le "$end_date" ];; 
     then
-        
-        echo -e "\nEnter your region. Choose from bellow: "
 
-        selected_field=6
+        echo -e "\n|---------------------------------|"
+        echo -e "|--|   Welcome to Voter Menu   |--|"
+        echo -e "|_________________________________|\n"
 
-        awk -F',' '{if (!seen[$'$selected_field']++) print $'$selected_field'}' $file_of_candidate_registration
+        echo -e "Enter your NID number: " 
+        read -p ">_ " voter_NID
 
-        #cut -d',' -f$selected_field data.csv | sort | uniq
+        column_to_search=2
 
-        echo 
+        first_result=$(awk -F ',' -v first="$voter_NID" '$0 ~ first { found=1; row=$0; exit } END { if (!found) exit 1 }' "$file_of_voter_registration")
 
-        read -p ">_ " voter_region
-
-        echo -e "\nEnter the candidate position where you want to submit your vote: "
-        read -p ">_ " voter_position
-
-        echo -e "\n|-----|Search Results for $voter_position at $voter_region|-----|\n"
-
-        awk -F',' -v Region="$voter_region" -v Position="$voter_position" '$6 == Region && $5 == Position' $file_of_candidate_registration | column -t -s,
-
-        echo -e "\nYour vote is precious for the People's Republic of Bangladesh. So, choose your $voter_position wisely..."
-
-        #voting process
-
-    else
-
-        echo -e "\n$voter_NID is not registered."
-        read -p "Do you want to register? [y/n]: " want_to_register
-
-        if [ $want_to_register == "y" ] || [ $want_to_register == "Y" ]; 
+        if [ $? -eq 0 ];
         then
+            
+            echo -e "\nEnter your region. Choose from bellow: "
 
-            voter_registration
+            selected_field=6
+
+            awk -F',' '{if (!seen[$'$selected_field']++) print $'$selected_field'}' $file_of_candidate_registration
+
+            #cut -d',' -f$selected_field data.csv | sort | uniq
+
+            echo 
+
+            read -p ">_ " voter_region
+
+            echo -e "\nEnter the candidate position where you want to submit your vote: "
+            read -p ">_ " voter_position
+
+            echo -e "\n|-----|Search Results for $voter_position at $voter_region|-----|\n"
+
+            awk -F',' -v Region="$voter_region" -v Position="$voter_position" '$6 == Region && $5 == Position' $file_of_candidate_registration | column -t -s,
+
+            echo -e "\nYour vote is precious for the People's Republic of Bangladesh. So, choose your $voter_position wisely. Proceed? [y/n]: "
+
+            read -p ">_ " proceed_vote
+
+            if [ $proceed_vote == "y" ] || [ $proceed_vote == "Y" ];
+            then
+
+                if [ $voter_position == "Municipality" ];
+                then
+                    echo -e "\nYou will have 2 votes. First for the mayor position and second for the comissioner position. Proceed? [y/n]: "
+                    read -p ">_ " proceed_vote2
+
+                    if [ $proceed_vote2 == 'y' ] || [ $proceed_vote2 == 'Y' ];
+                    then 
+                        echo -e "\nEnter the NID number of the candidate of Mayor Position that you want to nominate: "
+                        read -p ">_ " first_vote
+
+                        echo $first_vote >> $mayor_vote_record
+
+                        sleep 1
+
+                        echo -e "\nEnter the NID number of the candidate of Comissioner Position that you want to nominate: "
+                        read -p ">_ " second_vote
+
+                        echo $second_vote >> $comissionar_vote_record
+
+                        sleep 1
+
+                        echo -e "\n|-----| Review |-----|"
+                        echo -e "First vote goes to $first_vote"
+                        echo -e "Second vote goes to $second_vote"
+                        echo -e "\nFinish voting process? [y/n] "
+                        read -p ">_ " finish_voting
+
+                        if [ $finish_voting == "y" ] || [ $finish_voting == "Y" ];
+                        then
+                            echo -e "\nThanks for your vote.\n"
+                            top_menu
+                        else
+                            top_menu
+                        fi
+
+                    fi
+
+                fi
+
+            else top_menu
+
+            fi
 
         else
 
-            top_menu
+            echo -e "\n$voter_NID is not registered."
+            echo -e "\nDo you want to register? [y/n]: " 
+            read -p ">_ " want_to_register
+
+            if [ $want_to_register == "y" ] || [ $want_to_register == "Y" ]; 
+            then
+
+                voter_registration
+
+            else
+
+                top_menu
+
+            fi
 
         fi
+
+    elif [ "$current_date" -gt "$end_date" ];
+    then
+
+        echo -e "\nVoting process ended between $start_date and $end_date. Better luck next time."
+        feedback_function
+
+    elif [ "$current_date" -lt "$start_date" ];
+    then
+
+        echo -e "\nVoting process will available within $start_data and $end_date. Best wishes."
+        feedback_function
 
     fi
 
@@ -133,14 +226,33 @@ developer_mode() {
                 fi
             done < "$file_of_voter_registration"
 
-            echo -e "\nDeleting record..."
-            sleep 2
+            echo -e "\nDo you still want to delete the voter? [y/ n]: "
+            read -p ">_ " delete_proceed
 
-            #delete voter record
+            if [ $delete_proceed == "y" ] || [ $delete_proceed == "Y" ]; 
+            then
 
-            echo -e "Records for $voter_nid_card_number has been deleted. "
+                echo -e "\nDeleting record..."
+                sleep 2
 
-            developer_mode
+                #delete voter record
+                current_directory=$(pwd)
+
+                cd $current_directory
+
+                touch temp.csv
+
+                awk -F',' -v value="$voter_nid_card_number" '$2 != value' $file_of_voter_registration > temp.csv && mv temp.csv $file_of_voter_registration
+
+                echo -e "Records for $voter_nid_card_number has been deleted. \n"
+
+                developer_mode
+
+            else 
+
+                developer_mode
+
+            fi
 
         else
 
@@ -189,14 +301,33 @@ developer_mode() {
                 fi
             done < "$file_of_candidate_registration"
 
-            echo -e "\nDeleting record..."
-            sleep 2
+            echo -e "\nDo you still want to delete the voter? [y/ n]: "
+            read -p ">_ " delete_proceed2
 
-            #delete voter record
+            if [ $delete_proceed2 == "y" ] || [ $delete_proceed2 == "Y" ]; 
+            then
 
-            echo -e "Records for $candidate_nid_card_number has been deleted. "
+                echo -e "\nDeleting record..."
+                sleep 2
 
-            developer_mode
+                #delete voter record
+                current_directory=$(pwd)
+
+                cd $current_directory
+
+                touch temp.csv
+
+                awk -F',' -v value="$candidate_nid_card_number" '$2 != value' $file_of_candidate_registration > temp.csv && mv temp.csv $file_of_candidate_registration
+
+                echo -e "Records for $candidate_nid_card_number has been deleted. \n"
+
+                developer_mode
+
+            else 
+
+                developer_mode
+                
+            fi
 
         else
 
@@ -204,12 +335,27 @@ developer_mode() {
             sleep 2
 
             #delete voter record
+            current_directory=$(pwd)
+
+            cd $current_directory
+
+            touch temp.csv
+
+            awk -F',' -v value="$candidate_nid_card_number" '$2 != value' $file_of_candidate_registration > temp.csv && mv temp.csv $file_of_candidate_registration
 
             echo -e "Records for $candidate_nid_card_number has been deleted. \n\n"
 
             developer_mode
 
         fi
+
+    elif [ $choice3 == 5 ];
+    then
+        main_menu
+
+    else
+        echo -e "\nInvalid choice. Please try again"
+        developer_mode
 
     fi
 
@@ -334,19 +480,8 @@ main_menu() {
 
         if [  $proceeding == 'y' ] || [ $proceeding == 'Y' ]; 
         then
-            echo -e "\nEnter your feedback here: \n"
-            read feedback
-
-            echo "$feedback" >> "$feedback_file"
-
-            echo -e "recording..."
-            sleep 2
-
-            echo -e "Thnaks for your response. \n"
-
-            sleep 2
             
-            exit 1
+            feedback_function
         
         else
 
@@ -373,13 +508,14 @@ top_menu() {
     echo -e "\nEnter your cooresponding number: \n"
     echo -e "1. Registration"
     echo -e "2. Vote"
-    echo -e "3. Exit\n"
+    echo -e "3. Vote Result"
+    echo -e "4. Exit\n"
 
     read -p ">_ " choice5
 
     if [ $choice5 == 1 ]; then main_menu
     elif [ $choice5 == 2 ]; then vote_menu
-    elif [ $choice5 == 3 ]; then exit 0
+    elif [ $choice5 == 4 ]; then exit 0
     else top_menu
     fi
 
