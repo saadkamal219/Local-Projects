@@ -15,36 +15,130 @@ feedback_file='/home/saad/Desktop/Digital_Voting_Machine/feedback.txt'
 mayor_vote_record='/home/saad/Desktop/Digital_Voting_Machine/mayor_vote_record.txt'
 comissionar_vote_record='/home/saad/Desktop/Digital_Voting_Machine/comissionar_vote_record.txt'
 mp_vote_record='/home/saad/Desktop/Digital_Voting_Machine/mp_vote_record.txt'
+file_of_email_record='/home/saad/Desktop/Digital_Voting_Machine/Voter_email.csv'
+current_date=$(date +"%Y-%m-%d")
+start_date="2023-11-21"
+end_date="2024-01-21"
+
+email_confirmation() {
+
+    echo -e "\nDo you want to recieive email confirmation or any update through email? [y/n]: "
+    read -p ">_ " email_confirmation
+
+    if [ $email_confirmation == 'y' ] || [ $email_confirmation == 'Y' ];
+    then
+        
+        echo -e "\nEnter your NID number: "
+        read -p ">_ " email_nid
+
+        echo -e "\nEnter your email: [ Ex: example@example.example ]"
+        read -p ">_ " email
+
+        echo -e "\nYour NID number: $email_nid"
+        echo -e "Your email: $email\n"
+        
+        echo -e "Confirm details? [y/n]: "
+        read -p ">_ " email_conf
+
+        if [ $email_conf == 'y' ] || [ $email_conf == 'Y' ];
+        then    
+            email_record=("$email_nid", "$email")
+
+            (IFS=''; echo "${email_record[*]}") >> "$file_of_email_record"
+            sleep 1
+
+            echo -e "\nInformatio added successfully."
+
+            top_menu
+
+        elif [ $email_conf == 'n' ] || [ $email_conf == 'N' ];
+        then
+
+            top_menu
+
+        else
+
+            echo -e "\nInvalid input format. Please try again"
+            email_confirmation
+
+        fi
+
+    else
+        top_menu
+    fi
+    
+}
+
+send_email() {
+
+    echo -e ""
+
+}
+
+vote_result() {
+    
+    if [ "$current_date" \> "$start_date" ] && [ "$current_date" \< "$end_date" ];
+    then
+
+        echo -e "\nVoting Process in ongoing. Please be patient. \n"
+        sleep 1
+        top_menu
+
+    elif [ "$current_date" \< "$end_date" ];
+    then
+
+        echo -e "\nVote Result during $start_date and $end_date.\n"
+        sleep 1
+        top_menu
+
+    elif [ "$current_date" \> "$start_date" ];
+    then
+
+        echo -e "\nVoting will be available between $start_date and $end_date. Please be patient\n"
+        sleep 1
+        top_menu 
+
+    fi
+
+}
 
 feedback_function() {
 
-    echo -e "\nEnter your feedback here: \n"
-    
-    read feedback
+    echo -e ""
+    read -p "Thanks for using this portal. It will be our pleasure if you leave some feedback. Proceed? [y/n]: " proceeding
 
-    echo "$feedback" >> "$feedback_file"
-
-    echo -e "recording..."
-    sleep 2
-
-    echo -e "Thnaks for your response. \n"
-
-    sleep 2
+    if [  $proceeding == 'y' ] || [ $proceeding == 'Y' ]; 
+    then
             
-    top_menu
+        echo -e "\nEnter your feedback here: \n"
+    
+        read feedback
+
+        echo "$feedback" >> "$feedback_file"
+
+        echo -e "recording..."
+        sleep 2
+
+        echo -e "Thnaks for your response. \n"
+
+        sleep 2
+                
+        top_menu
+        
+    else
+
+        echo -e "Thanks for using this portal."
+        sleep 1
+
+        top_menu
+        
+    fi
 
 }
 
 vote_menu() {
 
-    # Get the current timestamp
-    current_date=$(date +%s)
-
-    # Define start and end dates as timestamps
-    start_date=$(date -d "2023-01-01" +%s)
-    end_date=$(date -d "2023-12-31" +%s)
-
-    if [ "$current_date" -ge "$start_date" ] && [ "$current_date" -le "$end_date" ];; 
+    if [ "$current_date" \> "$start_date" ] && [ "$current_date" \< "$end_date" ];
     then
 
         echo -e "\n|---------------------------------|"
@@ -149,13 +243,13 @@ vote_menu() {
 
         fi
 
-    elif [ "$current_date" -gt "$end_date" ];
+    elif [ "$current_date" \< "$end_date" ];
     then
 
         echo -e "\nVoting process ended between $start_date and $end_date. Better luck next time."
         feedback_function
 
-    elif [ "$current_date" -lt "$start_date" ];
+    elif [ "$current_date" \> "$start_date" ];
     then
 
         echo -e "\nVoting process will available within $start_data and $end_date. Best wishes."
@@ -515,6 +609,7 @@ top_menu() {
 
     if [ $choice5 == 1 ]; then main_menu
     elif [ $choice5 == 2 ]; then vote_menu
+    elif [ $choice5 == 3 ]; then vote_result
     elif [ $choice5 == 4 ]; then exit 0
     else top_menu
     fi
@@ -523,5 +618,5 @@ top_menu() {
 
 while [ true ];
 do
-    top_menu
+    email_confirmation
 done
