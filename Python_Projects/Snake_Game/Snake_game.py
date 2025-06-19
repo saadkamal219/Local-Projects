@@ -12,16 +12,16 @@ import pygame
 
 pygame.init()
 
-hit = pygame.mixer.Sound("/home/saad/Music/Game_Sound/hit.mp3")
-no = pygame.mixer.Sound("/home/saad/Music/Game_Sound/nooooo.ogg")
-eat = pygame.mixer.Sound("/home/saad/Music/Game_Sound/eat.mp3")
-click = pygame.mixer.Sound("/home/saad/Music/Game_Sound/click.mp3")
-joy = pygame.mixer.Sound("/home/saad/Music/Game_Sound/joy.mp3")
-hiss = pygame.mixer.Sound("/home/saad/Music/Game_Sound/hiss.mp3")
-up = pygame.mixer.Sound("/home/saad/Music/Game_Sound/up.mp3")
-down = pygame.mixer.Sound("/home/saad/Music/Game_Sound/down.mp3")
-right = pygame.mixer.Sound("/home/saad/Music/Game_Sound/right.mp3")
-left = pygame.mixer.Sound("/home/saad/Music/Game_Sound/left.mp3")
+hit = pygame.mixer.Sound("/home/saad/Snake_Game/hit.mp3")
+no = pygame.mixer.Sound("/home/saad/Snake_Game/nooooo.ogg")
+eat = pygame.mixer.Sound("/home/saad/Snake_Game/eat.mp3")
+click = pygame.mixer.Sound("/home/saad/Snake_Game/click.mp3")
+joy = pygame.mixer.Sound("/home/saad/Snake_Game/joy.mp3")
+hiss = pygame.mixer.Sound("/home/saad/Snake_Game/hiss.mp3")
+up = pygame.mixer.Sound("/home/saad/Snake_Game/up.mp3")
+down = pygame.mixer.Sound("/home/saad/Snake_Game/down.mp3")
+right = pygame.mixer.Sound("/home/saad/Snake_Game/right.mp3")
+left = pygame.mixer.Sound("/home/saad/Snake_Game/left.mp3")
 
 snake_head_color = "#eeff03"
 snake_body_color = "#20ff03"
@@ -36,7 +36,7 @@ sum = 0
 # snake_head_color.setup(0, 0)
 # turtle.textinput("OOP II Project - Snake Game", "Enter the color of snake body: ")
 
-f = open("high_score.txt", "r")
+f = open("/home/saad/Snake_Game/high_score.txt", "r")
 
 delay = 0.1
 speed_of_snake = 10
@@ -47,7 +47,7 @@ f.close()
 #set up the screen
 window = turtle.Screen()
 hiss.play()
-window.title("Snake Game")
+window.title("Python")
 window.bgcolor("black")
 window.setup(width = 600, height = 600)
 window.tracer(0) #turns off the animation no the screen
@@ -57,18 +57,18 @@ window.tracer(0) #turns off the animation no the screen
 #Creating custom shapes
 
 # custom_shape = turtle.Turtle()
-
-turtle.register_shape('/home/saad/Pictures/Game_Graphics/snake_head.gif')
-turtle.register_shape('/home/saad/Pictures/Game_Graphics/up.gif')
-turtle.register_shape('/home/saad/Pictures/Game_Graphics/down.gif')
-turtle.register_shape('/home/saad/Pictures/Game_Graphics/left.gif')
-turtle.register_shape('/home/saad/Pictures/Game_Graphics/right.gif')
+ 
+turtle.register_shape('/home/saad/Snake_Game/snake_head.gif')
+turtle.register_shape('/home/saad/Snake_Game/up.gif')
+turtle.register_shape('/home/saad/Snake_Game/down.gif')
+turtle.register_shape('/home/saad/Snake_Game/left.gif')
+turtle.register_shape('/home/saad/Snake_Game/right.gif')
 
 #Snake Head
 
 snake_head = turtle.Turtle()
 snake_head.speed(0) #fastest animation speed, no delay at all
-snake_head.shape("/home/saad/Pictures/Game_Graphics/up.gif")
+snake_head.shape("/home/saad/Snake_Game/up.gif")
 snake_head.left(90)
 # snake_head.width = 
 snake_head.fillcolor(snake_head_color)
@@ -102,8 +102,8 @@ pen.color("white")
 pen.penup()
 pen.hideturtle()
 pen.goto(0,255)
-f5 = open("high_score.txt", "r")
-s = open("last_score.txt", "r")
+f5 = open("/home/saad/Snake_Game/high_score.txt", "r")
+s = open("/home/saad/Snake_Game/last_score.txt", "r")
 pen.write("Score: {} | Last Score: {} | High Score: {}".format(0, s.read(), f5.read()), align="center", font=("courier", 16, "normal"))
 f5.close()
 s.close()
@@ -146,25 +146,25 @@ def move():
 def go_up():
     if snake_head.direction != "down":
         snake_head.direction = "up"
-        snake_head.shape("/home/saad/Pictures/Game_Graphics/up.gif")
+        snake_head.shape("/home/saad/Snake_Game/up.gif")
         up.play()
 
 def go_down():
     if snake_head.direction != "up":
         snake_head.direction = "down"
-        snake_head.shape("/home/saad/Pictures/Game_Graphics/down.gif")
+        snake_head.shape("/home/saad/Snake_Game/down.gif")
         down.play()
 
 def go_left():
     if snake_head.direction != "right":
         snake_head.direction = "left"
-        snake_head.shape("/home/saad/Pictures/Game_Graphics/left.gif")
+        snake_head.shape("/home/saad/Snake_Game/left.gif")
         left.play()
 
 def go_right():
     if snake_head.direction != "left":
         snake_head.direction = "right"
-        snake_head.shape("/home/saad/Pictures/Game_Graphics/right.gif")
+        snake_head.shape("/home/saad/Snake_Game/right.gif")
         right.play()
 
 # def stop():
@@ -214,7 +214,7 @@ while True:
         #clear the segments list
         segments.clear()
 
-        sw = open("last_score.txt", "w")
+        sw = open("/home/saad/Snake_Game/last_score.txt", "w")
         last_score_str = str(score)
         sw.write(last_score_str)
         sw.close()
@@ -228,8 +228,8 @@ while True:
 
         pen.clear()
         # pen1.clear()
-        f1 = open("high_score.txt", "r")
-        s3 = open("last_score.txt", "r")
+        f1 = open("/home/saad/Snake_Game/high_score.txt", "r")
+        s3 = open("/home/saad/Snake_Game/last_score.txt", "r")
         pen.write("Score: {} | Last Score: {} | High Score: {}".format(score, s3.read(), f1.read()), align = "center", font = ("courier", 16, "normal"))
         f1.close()
         s3.close()
@@ -277,8 +277,8 @@ while True:
 
         pen.clear()
         # pen1.close()
-        f3 = open("high_score.txt", "r")
-        s2 = open("last_score.txt", "r")
+        f3 = open("/home/saad/Snake_Game/high_score.txt", "r")
+        s2 = open("/home/saad/Snake_Game/last_score.txt", "r")
         pen.write("Score: {} | Last Score: {} | High Score: {}".format(score, s2.read(), f3.read()), align = "center", font = ("courier", 16, "normal"))
         f3.close()
         s2.close()
@@ -313,8 +313,8 @@ while True:
 
             pen.clear()
             # pen1.close()
-            f4 = open("high_score.txt", "r")
-            s4 = open("last_score.txt", "r")
+            f4 = open("/home/saad/Snake_Game/high_score.txt", "r")
+            s4 = open("/home/saad/Snake_Game/last_score.txt", "r")
             pen.write("Score: {} | Last Score: {} | High Score: {}".format(score, s4.read(), f4.read()), align = "center", font = ("courier", 16, "normal"))
             # f4.close()
             # s4.close()
