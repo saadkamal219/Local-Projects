@@ -2,6 +2,9 @@ import turtle
 import time
 import random
 import pygame
+from datetime import datetime
+import pyttsx3
+import random
 
 # import fonttools
 
@@ -10,18 +13,36 @@ import pygame
 
 #sound
 
+#Score Counter and history tracker
+
+def log_score(score, high_score, is_new_high=False):
+    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    with open("score_history.txt", "a") as history_file:
+        if is_new_high:
+            history_file.write(f"[{now}] Score: {score} (New High Score!)\n")
+        else:
+            history_file.write(f"[{now}] Score: {score}\n")
+
+#Function ends here !! Don't worry to much !!!
+
 pygame.init()
 
-hit = pygame.mixer.Sound("/home/saad/Snake_Game/hit.mp3")
-no = pygame.mixer.Sound("/home/saad/Snake_Game/nooooo.ogg")
-eat = pygame.mixer.Sound("/home/saad/Snake_Game/eat.mp3")
-click = pygame.mixer.Sound("/home/saad/Snake_Game/click.mp3")
-joy = pygame.mixer.Sound("/home/saad/Snake_Game/joy.mp3")
-hiss = pygame.mixer.Sound("/home/saad/Snake_Game/hiss.mp3")
-up = pygame.mixer.Sound("/home/saad/Snake_Game/up.mp3")
-down = pygame.mixer.Sound("/home/saad/Snake_Game/down.mp3")
-right = pygame.mixer.Sound("/home/saad/Snake_Game/right.mp3")
-left = pygame.mixer.Sound("/home/saad/Snake_Game/left.mp3")
+hit = pygame.mixer.Sound("hit.mp3")
+no = pygame.mixer.Sound("nooooo.ogg")
+eat = pygame.mixer.Sound("eat.mp3")
+click = pygame.mixer.Sound("click.mp3")
+joy = pygame.mixer.Sound("joy.mp3")
+hiss = pygame.mixer.Sound("hiss.mp3")
+up = pygame.mixer.Sound("up.mp3")
+down = pygame.mixer.Sound("down.mp3")
+right = pygame.mixer.Sound("right.mp3")
+left = pygame.mixer.Sound("left.mp3")
+less_then_10 = pygame.mixer.Sound("less_then_10.mp3")
+more_then_40 = pygame.mixer.Sound("more_then_40.mp3")
+new_high_score = pygame.mixer.Sound("new_high_score.mp3")
+reguler1 = pygame.mixer.Sound("reguler1.mp3")
+reguler2 = pygame.mixer.Sound("reguler2.mp3")
+reguler3 = pygame.mixer.Sound("reguler3.mp3")
 
 snake_head_color = "#eeff03"
 snake_body_color = "#20ff03"
@@ -36,7 +57,7 @@ sum = 0
 # snake_head_color.setup(0, 0)
 # turtle.textinput("OOP II Project - Snake Game", "Enter the color of snake body: ")
 
-f = open("/home/saad/Snake_Game/high_score.txt", "r")
+f = open("high_score.txt", "r")
 
 delay = 0.1
 speed_of_snake = 10
@@ -58,17 +79,17 @@ window.tracer(0) #turns off the animation no the screen
 
 # custom_shape = turtle.Turtle()
  
-turtle.register_shape('/home/saad/Snake_Game/snake_head.gif')
-turtle.register_shape('/home/saad/Snake_Game/up.gif')
-turtle.register_shape('/home/saad/Snake_Game/down.gif')
-turtle.register_shape('/home/saad/Snake_Game/left.gif')
-turtle.register_shape('/home/saad/Snake_Game/right.gif')
+turtle.register_shape('snake_head.gif')
+turtle.register_shape('up.gif')
+turtle.register_shape('down.gif')
+turtle.register_shape('left.gif')
+turtle.register_shape('right.gif')
 
 #Snake Head
 
 snake_head = turtle.Turtle()
 snake_head.speed(0) #fastest animation speed, no delay at all
-snake_head.shape("/home/saad/Snake_Game/up.gif")
+snake_head.shape("up.gif")
 snake_head.left(90)
 # snake_head.width = 
 snake_head.fillcolor(snake_head_color)
@@ -102,8 +123,8 @@ pen.color("white")
 pen.penup()
 pen.hideturtle()
 pen.goto(0,255)
-f5 = open("/home/saad/Snake_Game/high_score.txt", "r")
-s = open("/home/saad/Snake_Game/last_score.txt", "r")
+f5 = open("high_score.txt", "r")
+s = open("last_score.txt", "r")
 pen.write("Score: {} | Last Score: {} | High Score: {}".format(0, s.read(), f5.read()), align="center", font=("courier", 16, "normal"))
 f5.close()
 s.close()
@@ -146,25 +167,25 @@ def move():
 def go_up():
     if snake_head.direction != "down":
         snake_head.direction = "up"
-        snake_head.shape("/home/saad/Snake_Game/up.gif")
+        snake_head.shape("up.gif")
         up.play()
 
 def go_down():
     if snake_head.direction != "up":
         snake_head.direction = "down"
-        snake_head.shape("/home/saad/Snake_Game/down.gif")
+        snake_head.shape("down.gif")
         down.play()
 
 def go_left():
     if snake_head.direction != "right":
         snake_head.direction = "left"
-        snake_head.shape("/home/saad/Snake_Game/left.gif")
+        snake_head.shape("left.gif")
         left.play()
 
 def go_right():
     if snake_head.direction != "left":
         snake_head.direction = "right"
-        snake_head.shape("/home/saad/Snake_Game/right.gif")
+        snake_head.shape("right.gif")
         right.play()
 
 # def stop():
@@ -176,6 +197,21 @@ def go_right():
 #         snake_head.direction = "left"
 #     if snake_head.direction == "right":
 #         snake_head.direction = "right"
+
+def speakScore(score, high_score):
+    if score < 10:
+        less_then_10.play()
+    elif score > 40:
+        more_then_40.play()
+    elif score > high_score:
+        new_high_score.play()
+    else:
+        attempt = random.choice([1, 2, 3])
+
+        if attempt == 1: reguler1.play()
+        elif attempt == 2: reguler2.play()
+        elif attempt == 3: reguler3.play()
+
         
 
 
@@ -214,10 +250,18 @@ while True:
         #clear the segments list
         segments.clear()
 
-        sw = open("/home/saad/Snake_Game/last_score.txt", "w")
+        sw = open("last_score.txt", "w")
         last_score_str = str(score)
         sw.write(last_score_str)
         sw.close()
+
+        # Log score history
+
+        log_score(score, high_score, score == high_score)
+
+        # Speak score
+
+        speakScore(score, high_score)
 
         #reset the score
 
@@ -228,8 +272,8 @@ while True:
 
         pen.clear()
         # pen1.clear()
-        f1 = open("/home/saad/Snake_Game/high_score.txt", "r")
-        s3 = open("/home/saad/Snake_Game/last_score.txt", "r")
+        f1 = open("high_score.txt", "r")
+        s3 = open("last_score.txt", "r")
         pen.write("Score: {} | Last Score: {} | High Score: {}".format(score, s3.read(), f1.read()), align = "center", font = ("courier", 16, "normal"))
         f1.close()
         s3.close()
@@ -277,8 +321,8 @@ while True:
 
         pen.clear()
         # pen1.close()
-        f3 = open("/home/saad/Snake_Game/high_score.txt", "r")
-        s2 = open("/home/saad/Snake_Game/last_score.txt", "r")
+        f3 = open("high_score.txt", "r")
+        s2 = open("last_score.txt", "r")
         pen.write("Score: {} | Last Score: {} | High Score: {}".format(score, s2.read(), f3.read()), align = "center", font = ("courier", 16, "normal"))
         f3.close()
         s2.close()
@@ -304,6 +348,13 @@ while True:
             sw2.write(last_score_str)
             sw2.close()
 
+            # Log score history
+
+            log_score(score, high_score, score == high_score)
+
+            # Speak score
+            speakScore(score, high_score)
+
             #reset the score
 
             score = 0
@@ -313,8 +364,8 @@ while True:
 
             pen.clear()
             # pen1.close()
-            f4 = open("/home/saad/Snake_Game/high_score.txt", "r")
-            s4 = open("/home/saad/Snake_Game/last_score.txt", "r")
+            f4 = open("high_score.txt", "r")
+            s4 = open("last_score.txt", "r")
             pen.write("Score: {} | Last Score: {} | High Score: {}".format(score, s4.read(), f4.read()), align = "center", font = ("courier", 16, "normal"))
             # f4.close()
             # s4.close()
