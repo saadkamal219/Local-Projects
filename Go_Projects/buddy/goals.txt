@@ -1,0 +1,5 @@
+Project Goals
+
+1. Read/write data to file system
+2. Printing tabuler data to console
+3. CLI app with multiple options 
